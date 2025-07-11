@@ -1,0 +1,13 @@
+set number
+set ai
+syntax enable
+set hlsearch
+set showmatch
+set softtabstop=4
+set tabstop=4
+set shiftwidth=4
+set smarttab
+set expandtab
+set showtabline=4
+set showcmd
+set ruler
