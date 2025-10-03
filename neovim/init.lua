@@ -70,9 +70,6 @@ require('lazy').setup({
         changedelete = { text = '~' },
       },
     },
-    config = function()
-      gitsigns = require 'gitsigns'
-    end,
   },
   { -- Useful plugin to show you pending keybinds.
     'folke/which-key.nvim',
@@ -283,14 +280,14 @@ require('lazy').setup({
           map('gra', vim.lsp.buf.code_action, '[G]oto Code [A]ction', { 'n', 'x' })
 
           -- Find references for the word under your cursor.
-          map('grd', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
+          map('grr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
 
           -- Jump to the implementation of the word under your cursor.
           --  Useful when your language has ways of declaring types without an actual implementation.
           map('gri', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
 
           --  To jump back, press <C-t>.
-          -- map('grd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
+          map('grd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
 
           map('grD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
 

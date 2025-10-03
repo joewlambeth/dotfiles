@@ -31,6 +31,23 @@ precmd() {
     export PS1=" $PS_TIME$PS_EXIT$PS_HOST$PS_PATH %F{245}>%f"
 }
 
+netjps() {
+  if [ -z "$1" ]; then
+    echo "Usage: netjps <filter>"
+    return 1
+  fi
+
+  pid=$(jps -l | awk "/$1/ {print \$1; exit}")
+  if [ -z "$pid" ]; then
+    echo "No process found matching \"$1\""
+    return 1
+  fi
+
+  echo "Starting nettop for PID $pid (filter: $1)..."
+  # sudo nettop -p "$pid"
+  nettop -p "$pid"
+}
+
 TMOUT=1
 TRAPALRM() {
     precmd
