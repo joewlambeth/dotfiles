@@ -1,5 +1,6 @@
 require("jlambeth.mappings").vanilla()
 require("jlambeth.statuscolumn")
+require("jlambeth.opts")
 
 vim.api.nvim_create_autocmd('TextYankPost', {
   desc = 'Highlight when yanking (copying) text',

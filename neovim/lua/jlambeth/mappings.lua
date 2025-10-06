@@ -92,4 +92,14 @@ M.telescope = function()
 	end, { desc = "[S]earch [N]eovim files" })
 end
 
+M.lsp = function()
+	local map = function(key, command, desc)
+		vim.keymap.set("n", key, command, {desc = desc})
+	end
+
+	map ('grn', vim.lsp.buf.rename, "[R]e[n]ame")
+	map ('gra', vim.lsp.buf.code_action, "[G]oto Code [A]ction" )
+	map ('grr', vim.lsp.buf.code_action, "[G]oto [R]eferences" )
+end
+
 return M
