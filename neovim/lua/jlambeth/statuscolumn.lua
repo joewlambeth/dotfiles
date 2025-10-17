@@ -7,6 +7,9 @@ _G.MY_STATUS = function()
 	local current_win_bufnr = vim.api.nvim_get_current_buf()
 	local active_bufnr = vim.fn.bufnr(0)
 
+	local drawn_win = vim.api.nvim_get_current_win()
+	local focused = tonumber(vim.g.actual_curwin) == tonumber(drawn_win)
+
 	local border = function()
 		return "│"
 	end
@@ -20,10 +23,7 @@ _G.MY_STATUS = function()
 	end
 
 	local rnu = function()
-		-- if current_win_bufnr ~= active_bufnr then
-		-- 	return ""
-		-- end
-		if not vim.api.nvim_get_option_value(0, "winactive") then
+		if not focused then
 			return ""
 		end
 
@@ -39,7 +39,7 @@ _G.MY_STATUS = function()
 	end
 
 	local text = table.concat({
-		"",
+		focused and " " or "",
 		rnu(),
 		lnum(),
 		border(),
@@ -47,4 +47,4 @@ _G.MY_STATUS = function()
 	return text
 end
 
-vim.o.statuscolumn = "%!v:lua.MY_STATUS()"
+vim.o.statuscolumn = "%{%v:lua.MY_STATUS()%}"
