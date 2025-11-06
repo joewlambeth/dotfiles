@@ -8,7 +8,30 @@ M.vanilla = function()
 	vim.keymap.set("n", "<C-j>", "<C-w><C-j>", { desc = "Move focus to the lower window" })
 	vim.keymap.set("n", "<C-k>", "<C-w><C-k>", { desc = "Move focus to the upper window" })
 
-	-- TODO: primagen had some other based ones
+	vim.keymap.set("x", "@", function()
+		-- Save the visual-selection positions right away (before any prompts)
+		local start_pos = tonumber(vim.fn.getpos("v")[2]) -- {bufnum, lnum, col, off}
+		local end_pos = tonumber(vim.fn.getpos(".")[2])
+
+		if start_pos > end_pos then
+			start_pos, end_pos = end_pos, start_pos
+		end
+
+		local ok, reg = pcall(vim.fn.getcharstr)
+		if not ok or reg == "" or reg == "\27" then
+			print("Cancelled")
+			return
+		end
+		reg = reg:sub(1, 1)
+		vim.notify(string.format("recorded range is %s %s", start_pos, end_pos))
+		vim.cmd(string.format("%d,%dnormal! @%s", tonumber(start_pos), tonumber(end_pos), reg))
+	end, { desc = "Run macro over visual selection", noremap = true, silent = true })
+	vim.keymap.set("n", "#", "@q", { desc = "Quick macro execute" })
+
+	vim.keymap.set("v", ">", ">gv", { desc = "Indent right and reselect" })
+	vim.keymap.set("v", "<", "<gv", { desc = "Indent left and reselect" })
+
+	vim.keymap.set("n", "Q", "<nop>")
 end
 
 M.wiki = function()

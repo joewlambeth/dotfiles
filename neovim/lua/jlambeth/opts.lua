@@ -9,7 +9,6 @@ vim.schedule(function()
 	vim.opt.clipboard = "unnamedplus"
 end)
 
-vim.opt.breakindent = true
 vim.opt.undofile = true
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
@@ -25,5 +24,9 @@ vim.opt.inccommand = "nosplit"
 vim.opt.cursorline = true
 vim.opt.scrolloff = 10
 vim.opt.confirm = true
+
+vim.opt.breakindent = true
 vim.opt.expandtab = true
 vim.opt.tabstop = 4
+
+vim.opt.colorcolumn = "120"

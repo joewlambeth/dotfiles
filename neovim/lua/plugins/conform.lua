@@ -16,7 +16,6 @@ return {
 					require("conform").format({ bufnr = args.buf })
 				end,
 			})
-
 			require("conform.formatters").injected = {
 				options = {
 					ft_parsers = {},
