@@ -6,7 +6,7 @@ vim.opt.mouse = "a"
 vim.opt.showmode = false
 
 vim.schedule(function()
-	vim.opt.clipboard = "unnamedplus"
+	vim.opt.clipboard = "unnamedplus,unnamed"
 end)
 
 vim.opt.undofile = true

@@ -1,7 +1,6 @@
 -- https://www.reddit.com/r/neovim/comments/1djjc6q/statuscolumn_a_beginers_guide/
 
 _G.MY_STATUS = function()
-	-- TODO: hide RNU's for inactive buffers
 	local screen_height = math.max(2, #tostring(vim.api.nvim_win_get_height(0)))
 	local buffer_height = math.max(3, #tostring(vim.api.nvim_buf_line_count(0)))
 	local current_win_bufnr = vim.api.nvim_get_current_buf()

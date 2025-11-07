@@ -1,7 +1,7 @@
 local M = {}
 
 M.vanilla = function()
-	vim.keymap.set("n", "<leader>gp", "<Cmd>Ex<CR>")
+	vim.keymap.set("n", "<leader>e", "<Cmd>Ex<CR>", { desc = "[E]xplore" })
 	vim.keymap.set("i", "kj", "<Esc>")
 	vim.keymap.set("n", "<C-h>", "<C-w><C-h>", { desc = "Move focus to the left window" })
 	vim.keymap.set("n", "<C-l>", "<C-w><C-l>", { desc = "Move focus to the right window" })
@@ -90,6 +90,7 @@ M.telescope = function()
 	vim.keymap.set("n", "<leader>sr", builtin.resume, { desc = "[S]earch [R]esume" })
 	vim.keymap.set("n", "<leader>s.", builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
 	vim.keymap.set("n", "<leader><leader>", builtin.buffers, { desc = "[ ] Find existing buffers" })
+	vim.keymap.set("n", "<leader>so", builtin.vim_options, { desc = "[S]earch Vim [O]ptions" })
 
 	-- Slightly advanced example of overriding default behavior and theme
 	vim.keymap.set("n", "<leader>/", function()
@@ -122,7 +123,12 @@ M.lsp = function()
 
 	map("grn", vim.lsp.buf.rename, "[R]e[n]ame")
 	map("gra", vim.lsp.buf.code_action, "[G]oto Code [A]ction")
-	map("grr", vim.lsp.buf.references, "[G]oto [R]eferences")
+
+	local telescope = require("telescope.builtin")
+
+	map("grr", telescope.lsp_references, "[G]oto [R]eferences")
+	map("grd", telescope.lsp_definitions, "[G]oto [D]efinition")
+	map("gp", telescope.diagnostics, "[G]oto [D]iagnostics")
 end
 
 return M
