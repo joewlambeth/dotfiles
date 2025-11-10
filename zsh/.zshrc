@@ -2,7 +2,6 @@ export CLICOLOR=1
 
 alias sed="sed -E"
 alias grep="grep -E"
-alias python="python3"
 alias less="less -R"
 alias ll="ls -la"
 alias la="ls -a"

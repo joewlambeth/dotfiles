@@ -131,4 +131,18 @@ M.lsp = function()
 	map("gp", telescope.diagnostics, "[G]oto [D]iagnostics")
 end
 
+M.term = function()
+	vim.keymap.set("t", "<Esc>", [[<C-\><C-n>]], { noremap = true, silent = true })
+	vim.keymap.set("n", "<leader>t", function()
+		require("jlambeth.terminal").toggle_term()
+	end, {
+		desc = "Toggle [T]erminal",
+		noremap = true,
+		silent = true,
+	})
+	vim.keymap.set("t", "kj", function()
+		require("jlambeth.terminal").toggle_term()
+	end)
+end
+
 return M
