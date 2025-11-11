@@ -1,5 +1,27 @@
 -- https://www.reddit.com/r/neovim/comments/1djjc6q/statuscolumn_a_beginers_guide/
 -- https://github.com/akinsho/dotfiles/blob/main/.config/nvim/plugin/statuscolumn.lua#L56-L72
+--
+
+local left_window = nil
+
+vim.api.nvim_create_autocmd("WinEnter", {
+	callback = function(ev)
+		vim.schedule(function()
+			if left_window and vim.api.nvim_win_is_valid(left_window) then
+				vim.api.nvim__redraw({
+					win = left_window,
+					statuscolumn = true,
+				})
+			end
+		end)
+	end,
+})
+
+vim.api.nvim_create_autocmd("WinLeave", {
+	callback = function(ev)
+		left_window = vim.api.nvim_get_current_win()
+	end,
+})
 
 _G.MY_STATUS = function()
 	local screen_height = math.max(2, #tostring(vim.api.nvim_win_get_height(0)))
@@ -30,12 +52,8 @@ _G.MY_STATUS = function()
 	local drawn_win = vim.api.nvim_get_current_win()
 	local focused = tonumber(vim.g.actual_curwin) == tonumber(drawn_win)
 
-	if git_border ~= nil and winner == nil then
-		vim.print("BAD! " .. git_border)
-	end
-
 	local border = function()
-		return git_border or "│"
+		return git_border or "%#Normal#│"
 		-- return "│"
 	end
 
@@ -48,10 +66,6 @@ _G.MY_STATUS = function()
 	end
 
 	local rnu = function()
-		if not focused then
-			return ""
-		end
-
 		if vim.v.relnum == 0 then
 			return string.rep("-", screen_height)
 		end
@@ -63,13 +77,12 @@ _G.MY_STATUS = function()
 		return string.format("%" .. buffer_height .. "s", show_wrap(vim.v.lnum, ".."))
 	end
 
-	local text = table.concat({
-		winner or "  ",
-		focused and " " or "",
-		rnu(),
-		lnum(),
-		border(),
-	}, "")
+	local text
+	if focused then
+		text = string.format("%s %s %s %s", winner or " ", rnu(), lnum(), border())
+	else
+		text = string.format("%s %s", lnum(), border())
+	end
 	return text
 end
 
