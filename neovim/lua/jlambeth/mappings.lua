@@ -145,4 +145,16 @@ M.term = function()
 	end)
 end
 
+M.git = function()
+	local gitsigns = require("gitsigns")
+	vim.keymap.set("n", "<leader>gb", function()
+		gitsigns.blame()
+	end)
+
+	vim.keymap.set("n", "<leader>gh", function()
+		gitsigns.preview_hunk_inline()
+	end)
+	-- TODO: something nice for commit previewing
+end
+
 return M

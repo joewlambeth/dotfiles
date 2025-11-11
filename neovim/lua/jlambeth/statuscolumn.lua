@@ -5,7 +5,7 @@
 local left_window = nil
 
 vim.api.nvim_create_autocmd("WinEnter", {
-	callback = function(ev)
+	callback = function()
 		vim.schedule(function()
 			if left_window and vim.api.nvim_win_is_valid(left_window) then
 				vim.api.nvim__redraw({
@@ -18,7 +18,7 @@ vim.api.nvim_create_autocmd("WinEnter", {
 })
 
 vim.api.nvim_create_autocmd("WinLeave", {
-	callback = function(ev)
+	callback = function()
 		left_window = vim.api.nvim_get_current_win()
 	end,
 })
@@ -27,6 +27,10 @@ _G.MY_STATUS = function()
 	local screen_height = math.max(2, #tostring(vim.api.nvim_win_get_height(0)))
 	local buffer_height = math.max(3, #tostring(vim.api.nvim_buf_line_count(0)))
 	local current_win_bufnr = vim.api.nvim_get_current_buf()
+
+	if vim.api.nvim_get_option_value("buftype", {}) == "nofile" then
+		return ""
+	end
 
 	local signs = vim.api.nvim_buf_get_extmarks(
 		current_win_bufnr,
@@ -54,7 +58,6 @@ _G.MY_STATUS = function()
 
 	local border = function()
 		return git_border or "%#Normal#│"
-		-- return "│"
 	end
 
 	local show_wrap = function(var, repl)
