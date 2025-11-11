@@ -1,9 +1,22 @@
 local M = {}
 -- Function to toggle a floating terminal
+--
+
 local float_term = {
 	buffer = nil,
 	window = nil,
 }
+
+vim.api.nvim_create_autocmd("VimLeavePre", {
+	callback = function()
+		if float_term.buffer and vim.api.nvim_buf_is_valid(float_term.buffer) then
+			local ok, job_id = pcall(vim.api.nvim_buf_get_var, float_term.buffer, "terminal_job_id")
+			if ok and job_id and job_id ~= 0 then
+				pcall(vim.fn.jobstop, job_id)
+			end
+		end
+	end,
+})
 
 M.close_term = function()
 	local is_open = float_term.window and vim.api.nvim_win_is_valid(float_term.window)

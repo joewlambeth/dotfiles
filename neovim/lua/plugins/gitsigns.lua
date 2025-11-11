@@ -10,5 +10,7 @@ return {
 			untracked = { text = "┆" },
 		},
 	},
-	config = function() end,
+	config = function()
+		require("jlambeth.mappings").git()
+	end,
 }
