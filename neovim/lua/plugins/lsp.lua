@@ -1,6 +1,15 @@
 -- lsp and treesitter are the same to me
 -- nerds cry about it
 
+local servers = {
+	lua_ls = {},
+	kotlin_lsp = {},
+}
+
+local on_attach = function(_, bufnr)
+	require("jlambeth.mappings").lsp()
+end
+
 return {
 	{
 		"nvim-treesitter/nvim-treesitter",
@@ -12,6 +21,8 @@ return {
 				"lua",
 				"luadoc",
 				"markdown",
+				"kotlin",
+				"python",
 			},
 		},
 		auto_install = true,
@@ -25,30 +36,55 @@ return {
 		indent = { enable = true, disable = { "ruby" } },
 	},
 	{
-		"mason-org/mason-lspconfig.nvim",
+		"saghen/blink.cmp",
+		opts = {
+			completion = {
+				accept = {
+					auto_brackets = {
+						enabled = true,
+					},
+				},
+
+				-- Do not preselect items
+				list = {
+					selection = {
+						preselect = true,
+						auto_insert = false,
+					},
+				},
+
+				documentation = {
+					auto_show = true,
+				},
+				ghost_text = { enabled = true },
+			},
+			signature = { enabled = true },
+		},
+	},
+	{
+		"neovim/nvim-lspconfig",
 		dependencies = {
 			{
 				"mason-org/mason.nvim",
-				opts = {}
+				opts = {},
 			},
-			"neovim/nvim-lspconfig",
-			"saghen/blink.cmp"
+			{
+				"mason-org/mason-lspconfig.nvim",
+				opts = {
+					ensure_installed = vim.tbl_keys(servers),
+					automatic_enable = true,
+				},
+			},
 		},
 		config = function()
-			require("mason-lspconfig").setup({
-				vim.api.nvim_create_autocmd('LspAttach', {
+			local capabilities = require("blink.cmp").get_lsp_capabilities()
 
-					callback = function(args)
-						-- https://github.com/neovim/neovim/issues/30644
-						vim.o.completeopt = 'noinsert,fuzzy,menu'
-						local client = assert(vim.lsp.get_client_by_id(args.data.client_id))
-						vim.lsp.completion.enable(true, client.id, args.buf, { autotrigger = true})
-						require("jlambeth.mappings").lsp()
-					end
-				})
-			})
-
-		end
+			for server_name, config in pairs(servers) do
+				config.on_attach = on_attach
+				config.capabilities = capabilities
+				vim.lsp.config(server_name, config)
+			end
+		end,
 	},
 	{
 		-- `lazydev` configures Lua LSP for your Neovim config, runtime and plugins
