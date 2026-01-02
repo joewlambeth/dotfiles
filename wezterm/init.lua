@@ -6,7 +6,9 @@ module.apply_to_config = function(config)
 		"clig=1",
 		"liga=1",
 	}
-	config.window_background_opacity = 0.8
+	config.use_fancy_tab_bar = false
+	config.window_decorations = "RESIZE"
+	config.window_background_opacity = 0.9
 	config.window_background_gradient = {
 		colors = {
 			"#000000",
