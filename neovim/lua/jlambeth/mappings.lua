@@ -140,16 +140,20 @@ M.term = function()
 		noremap = true,
 		silent = true,
 	})
+
 	vim.keymap.set("t", "kj", function()
 		require("jlambeth.terminal").toggle_term()
 	end)
+	vim.keymap.set("t", "<C-U>", "<Esc><C-U>")
 end
 
 M.git = function()
 	local gitsigns = require("gitsigns")
 	vim.keymap.set("n", "<leader>gb", function()
 		gitsigns.blame()
-	end)
+	end, {
+		desc = "[G]it [B]lame",
+	})
 
 	vim.keymap.set("n", "[c", function()
 		gitsigns.nav_hunk("prev", {
@@ -158,7 +162,9 @@ M.git = function()
 		}, function()
 			gitsigns.preview_hunk_inline()
 		end)
-	end)
+	end, {
+		desc = "Previous [C]hange",
+	})
 
 	vim.keymap.set("n", "]c", function()
 		gitsigns.nav_hunk("next", {
@@ -167,7 +173,16 @@ M.git = function()
 		}, function()
 			gitsigns.preview_hunk_inline()
 		end)
-	end)
+	end, {
+		desc = "Next [C]hange",
+	})
+
+	local builtins = require("telescope.builtin")
+	vim.keymap.set("n", "<leader>gd", function()
+		builtins.git_status()
+	end, {
+		desc = "[G]it [D]iff",
+	})
 	-- TODO: something nice for commit previewing
 end
 

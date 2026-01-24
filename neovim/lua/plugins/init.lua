@@ -12,6 +12,12 @@ return {
 			daily_tip = 2,
 		},
 	},
+	{
+		"karb94/neoscroll.nvim",
+		opts = {
+			duration_multiplier = 0.5,
+		},
+	},
 
 	-- TODO: todo, ironically
 	-- lines that show scopes
