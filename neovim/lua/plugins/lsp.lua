@@ -18,11 +18,13 @@ return {
 				"bash",
 				"diff",
 				"html",
+				"javascript",
 				"lua",
 				"luadoc",
 				"markdown",
 				"kotlin",
 				"python",
+				"typescript",
 			},
 		},
 		auto_install = true,
@@ -37,7 +39,14 @@ return {
 	},
 	{
 		"saghen/blink.cmp",
+		dependencies = {
+			"rafamadriz/friendly-snippets",
+		},
+		build = "cargo build --release",
 		opts = {
+			fuzzy = {
+				implementation = "prefer_rust",
+			},
 			completion = {
 				accept = {
 					auto_brackets = {

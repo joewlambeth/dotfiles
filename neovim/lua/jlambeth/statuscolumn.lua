@@ -48,7 +48,7 @@ _G.MY_STATUS = function()
 		if item.sign_hl_group:match("^Git") then
 			git_border = "%#" .. item.sign_hl_group .. "#" .. item.sign_text, 1, 2
 		elseif priority >= item.priority then
-			winner = "%#" .. item.sign_hl_group .. "#" .. string.sub(item.sign_text, 1, 1) .. "%#Normal#"
+			winner = "%#" .. item.sign_hl_group .. "#" .. vim.fn.strcharpart(item.sign_text, 0, 1) .. "%#Normal#"
 			priority = item.priority
 		end
 	end
@@ -90,3 +90,4 @@ _G.MY_STATUS = function()
 end
 
 vim.o.statuscolumn = "%{%v:lua.MY_STATUS()%}"
+vim.o.statusline = "%{FugitiveStatusline()} %f %y %m %r %= %l,%c %P"

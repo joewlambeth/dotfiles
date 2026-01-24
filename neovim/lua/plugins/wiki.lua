@@ -1,7 +1,12 @@
 return {
-	-- 'MeanderingProgrammer/render-markdown.nvim',
+	{
+		"MeanderingProgrammer/render-markdown.nvim",
+		dependencies = {
+			"nvim-tree/nvim-web-devicons",
+		},
+	},
 	-- 'qadzek/link.nvim',
-	'lervag/lists.vim',
+	"lervag/lists.vim",
 	-- {
 	-- 	"tadmccorkle/markdown.nvim",
 	-- 	ft = "markdown", -- or 'event = "VeryLazy"'

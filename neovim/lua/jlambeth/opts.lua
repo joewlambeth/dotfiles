@@ -31,3 +31,8 @@ vim.opt.tabstop = 4
 
 vim.opt.colorcolumn = "120"
 vim.o.winborder = "rounded"
+
+vim.diagnostic.config({
+	virtual_text = true,
+	virtual_lines = false,
+})

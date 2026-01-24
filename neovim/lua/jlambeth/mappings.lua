@@ -151,8 +151,22 @@ M.git = function()
 		gitsigns.blame()
 	end)
 
-	vim.keymap.set("n", "<leader>gh", function()
-		gitsigns.preview_hunk_inline()
+	vim.keymap.set("n", "[c", function()
+		gitsigns.nav_hunk("prev", {
+			wrap = false,
+			target = "all",
+		}, function()
+			gitsigns.preview_hunk_inline()
+		end)
+	end)
+
+	vim.keymap.set("n", "]c", function()
+		gitsigns.nav_hunk("next", {
+			wrap = false,
+			target = "all",
+		}, function()
+			gitsigns.preview_hunk_inline()
+		end)
 	end)
 	-- TODO: something nice for commit previewing
 end

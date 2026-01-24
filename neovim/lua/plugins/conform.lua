@@ -7,6 +7,7 @@ return {
 					lua = { "stylua" },
 					markdown = { "prettier" },
 					javascript = { "prettier" },
+					javascriptreact = { "prettier" },
 					python = { "autopep8" },
 				},
 			})
