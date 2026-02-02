@@ -1,4 +1,6 @@
 local module = {}
+local wezterm = require("wezterm")
+local layout = require("layout")
 
 module.apply_to_config = function(config)
 	config.harfbuzz_features = {
@@ -7,20 +9,15 @@ module.apply_to_config = function(config)
 		"liga=1",
 	}
 	config.use_fancy_tab_bar = false
-	config.window_decorations = "RESIZE"
-	config.window_background_opacity = 0.9
-	config.window_background_gradient = {
-		colors = {
-			"#000000",
-			"#1A1A1A",
-		},
-		noise = 128,
-		orientation = {
-			Linear = {
-				angle = -45.0,
-			},
-		},
+	config.enable_tab_bar = true
+
+	config.keys = {
+		layout.bind_wiki(),
+		layout.bind_workspace("python", wezterm.home_dir),
 	}
+	wezterm.default_workspace = "🧠 wiki"
+
+	wezterm.action.SwitchToWorkspace({ name = layout.first_workspace })
 end
 
 return module
