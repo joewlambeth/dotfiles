@@ -1,6 +1,7 @@
 local module = {}
 local wezterm = require("wezterm")
 local layout = require("layout")
+local action = wezterm.action
 
 module.apply_to_config = function(config)
 	config.harfbuzz_features = {
@@ -11,7 +12,27 @@ module.apply_to_config = function(config)
 	config.use_fancy_tab_bar = false
 	config.enable_tab_bar = true
 
+	config.inactive_pane_hsb = {
+		saturation = 0.8,
+		brightness = 0.5,
+	}
+
 	config.keys = {
+		{
+			key = "h",
+			mods = "SUPER",
+			action = layout.focus_pane,
+		},
+		{
+			key = "j",
+			mods = "SUPER",
+			action = layout.navigate_pane("Next"),
+		},
+		{
+			key = "k",
+			mods = "SUPER",
+			action = layout.search_workspaces,
+		},
 		layout.bind_wiki(),
 		layout.bind_workspace("python", wezterm.home_dir),
 	}

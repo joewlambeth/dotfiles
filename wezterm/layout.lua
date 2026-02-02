@@ -12,21 +12,22 @@ wezterm.on("update-status", function(window, pane)
 	window:set_left_status(wezterm.format({ { Text = " " .. workspace .. " " } }))
 end)
 
-wezterm.on("switch-workspace", function(window, pane, workspace)
-	local tabs = mux.get_tabs(workspace)
-
-	if #tabs > 0 then
-		return
+wezterm.on("joewlambeth:pane-change", function(window, pane)
+	local is_zoomed = false
+	for _, item in ipairs(window:active_tab():panes_with_info()) do
+		if item.is_zoomed then
+			is_zoomed = true
+		end
 	end
 
-	local tab, first_pane, window = mux.spawn_window({
-		workspace = workspace,
-	})
-	window:gui_window():maximize()
-
-	local callback = workspace_table[workspace]
-	if callback then
-		callback(tab, first_pane, window)
+	if is_zoomed then
+		window:set_config_overrides({
+			enable_tab_bar = false,
+		})
+	else
+		window:set_config_overrides({
+			enable_tab_bar = true,
+		})
 	end
 end)
 
@@ -47,9 +48,7 @@ function M.bind_workspace(name, path, mux_callback)
 	end
 
 	workspace_counter = workspace_counter + 1
-	if mux_callback then
-		workspace_table[name] = mux_callback
-	end
+	workspace_table[name] = { callback = mux_callback }
 	return {
 		key = tostring(workspace_counter),
 		mods = "SUPER|SHIFT",
@@ -75,5 +74,39 @@ function M.bind_wiki()
 
 	return binding
 end
+
+M.navigate_pane = function(dir)
+	return wezterm.action_callback(function(window, pane)
+		window:perform_action(actions.ActivatePaneDirection(dir), pane)
+		wezterm.emit("joewlambeth:pane-change", window, pane)
+	end)
+end
+
+M.focus_pane = wezterm.action_callback(function(window, pane)
+	window:perform_action(actions.TogglePaneZoomState, pane)
+	wezterm.emit("joewlambeth:pane-change", window, pane)
+end)
+
+M.search_workspaces = wezterm.action_callback(function(window, pane)
+	window:perform_action(actions.SetPaneZoomState(false), pane)
+	wezterm.emit("joewlambeth:pane-change", window, pane)
+	local summed_workspaces = {}
+	for workspace, _ in pairs(workspace_table) do
+		table.insert(summed_workspaces, { id = workspace, label = workspace })
+	end
+
+	window:perform_action(
+		actions.InputSelector({
+			action = wezterm.action_callback(function(inner_window, inner_pane, id, label)
+				if not label then
+					return
+				end
+				inner_window:perform_action(actions.SetActiveWorkspace(label), inner_pane)
+			end),
+			fuzzy = true,
+		}),
+		pane
+	)
+end)
 
 return M
