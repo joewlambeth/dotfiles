@@ -7,48 +7,45 @@ local M = {}
 local workspace_table = {}
 local workspace_counter = 0
 
-local function init()
-	wezterm.on("switch-workspace", function(window, pane, workspace)
-		local tabs = mux.get_tabs(workspace)
+wezterm.on("update-status", function(window, pane)
+	window:set_right_status(wezterm.format({ Text = " " .. "something " .. " " }))
+end)
 
-		if #tabs > 0 then
-			wezterm.log_info("I'm already created")
-			return
-		end
+wezterm.on("switch-workspace", function(window, pane, workspace)
+	local tabs = mux.get_tabs(workspace)
 
-		local tab, first_pane, window = mux.spawn_window({
-			workspace = workspace,
-		})
-		wezterm.log_info("I made a window")
+	if #tabs > 0 then
+		return
+	end
 
-		local callback = workspace_table[workspace]
-		if callback then
-			wezterm.log_info("I'm executing some work!")
-			callback(tab, first_pane, window)
-		end
-	end)
+	local tab, first_pane, window = mux.spawn_window({
+		workspace = workspace,
+	})
 
-	wezterm.on("update-status", function(window, pane)
-		local workspace = window:active_workspace()
-		wezterm.log_info("i'm updating " .. workspace)
-		window:set_right_status(wezterm.format({ Text = " " .. workspace .. " " }))
-	end)
-end
+	local callback = workspace_table[workspace]
+	if callback then
+		callback(tab, first_pane, window)
+	end
+end)
 
 function M.bind_workspace(name, path, mux_callback)
 	if workspace_counter == 0 then
 		M.first_workspace = name
-		init()
+		wezterm.on("gui-startup", function(cmd)
+			local tab, build_pane, window = mux.spawn_window({
+				workspace = name,
+				cwd = path,
+			})
+		end)
 	end
 
 	workspace_counter = workspace_counter + 1
 	if mux_callback then
 		workspace_table[name] = mux_callback
 	end
-	wezterm.log_info("I'm binding " .. name .. " to " .. tostring(workspace_counter))
 	return {
 		key = tostring(workspace_counter),
-		mods = "CTRL|SHIFT|ALT",
+		mods = "SUPER|SHIFT",
 		action = actions.SwitchToWorkspace({
 			name = name,
 			spawn = {
@@ -59,7 +56,7 @@ function M.bind_workspace(name, path, mux_callback)
 end
 
 function M.bind_wiki()
-	local wiki_dir = wezterm.home_dir .. "/wiki"
+	local wiki_dir = wezterm.home_dir
 	local binding = M.bind_workspace("🧠 wiki", wiki_dir, function(tab, first_pane, window)
 		first_pane:split({
 			direction = "Left",
