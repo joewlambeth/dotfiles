@@ -8,7 +8,8 @@ local workspace_table = {}
 local workspace_counter = 0
 
 wezterm.on("update-status", function(window, pane)
-	window:set_right_status(wezterm.format({ Text = " " .. "something " .. " " }))
+	local workspace = window:active_workspace()
+	window:set_left_status(wezterm.format({ { Text = " " .. workspace .. " " } }))
 end)
 
 wezterm.on("switch-workspace", function(window, pane, workspace)
@@ -21,6 +22,7 @@ wezterm.on("switch-workspace", function(window, pane, workspace)
 	local tab, first_pane, window = mux.spawn_window({
 		workspace = workspace,
 	})
+	window:gui_window():maximize()
 
 	local callback = workspace_table[workspace]
 	if callback then
@@ -36,6 +38,11 @@ function M.bind_workspace(name, path, mux_callback)
 				workspace = name,
 				cwd = path,
 			})
+			window:gui_window():maximize()
+			if mux_callback then
+				mux_callback(tab, build_pane, window)
+			end
+			mux.set_active_workspace(name)
 		end)
 	end
 
