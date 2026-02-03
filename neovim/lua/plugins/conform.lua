@@ -5,9 +5,10 @@ return {
 			require("conform").setup({
 				formatters_by_ft = {
 					lua = { "stylua" },
-					markdown = { "prettier" },
+					markdown = { "prettier", "injected" },
 					javascript = { "prettier" },
 					javascriptreact = { "prettier" },
+					json = { "jq" },
 					python = { "autopep8" },
 				},
 			})
@@ -17,12 +18,6 @@ return {
 					require("conform").format({ bufnr = args.buf })
 				end,
 			})
-			require("conform.formatters").injected = {
-				options = {
-					ft_parsers = {},
-					ext_parsers = {},
-				},
-			}
 		end,
 	},
 }

@@ -5,6 +5,21 @@ local servers = {
 	lua_ls = {},
 	kotlin_lsp = {},
 }
+local filetypes = {
+	"bash",
+	"diff",
+	"html",
+	"java",
+	"javascript",
+	"kotlin",
+	"lua",
+	"luadoc",
+	"markdown",
+	"markdown_inline",
+	"kotlin",
+	"python",
+	"typescript",
+}
 
 local on_attach = function(_, bufnr)
 	require("jlambeth.mappings").lsp()
@@ -13,29 +28,19 @@ end
 return {
 	{
 		"nvim-treesitter/nvim-treesitter",
-		opts = {
-			ensure_installed = {
-				"bash",
-				"diff",
-				"html",
-				"javascript",
-				"lua",
-				"luadoc",
-				"markdown",
-				"kotlin",
-				"python",
-				"typescript",
-			},
-		},
-		auto_install = true,
-		highlight = {
-			enable = true,
-			-- Some languages depend on vim's regex highlighting system (such as Ruby) for indent rules.
-			--  If you are experiencing weird indenting issues, add the language to
-			--  the list of additional_vim_regex_highlighting and disabled languages for indent.
-			additional_vim_regex_highlighting = { "ruby" },
-		},
-		indent = { enable = true, disable = { "ruby" } },
+		branch = "main",
+		lazy = false,
+		build = ":TSUpdate",
+		config = function ()
+			require("nvim-treesitter").install(filetypes)
+			vim.api.nvim_create_autocmd("FileType", {
+				pattern = filetypes,
+				callback = function ()
+					vim.treesitter.start()
+				end
+			})
+			
+		end
 	},
 	{
 		"saghen/blink.cmp",
