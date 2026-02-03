@@ -1,10 +1,15 @@
 local wezterm = require("wezterm")
 local actions = wezterm.action
 local mux = wezterm.mux
+local os = require("os")
+
+local shell = os.getenv("SHELL") or "/bin/bash"
 
 local M = {}
 
 local workspace_table = {}
+local current_workspace = nil
+local available_workspaces = {}
 local workspace_counter = 0
 
 wezterm.on("update-status", function(window, pane)
@@ -45,6 +50,9 @@ function M.bind_workspace(name, path, mux_callback)
 			end
 			mux.set_active_workspace(name)
 		end)
+		current_workspace = { label = name }
+	else
+		table.insert(available_workspaces, { label = name })
 	end
 
 	workspace_counter = workspace_counter + 1
@@ -67,7 +75,7 @@ function M.bind_wiki()
 		first_pane:split({
 			direction = "Left",
 			cwd = wiki_dir,
-			args = { "zsh", "-i", "-c", "nvim" .. "wiki/index.md" },
+			args = { shell, "-i", "-c", "nvim " .. wezterm.shell_quote_arg("wiki/index.md") },
 		})
 	end)
 
@@ -86,13 +94,26 @@ M.focus_pane = wezterm.action_callback(function(window, pane)
 	wezterm.emit("joewlambeth:pane-change", window, pane)
 end)
 
+local function switch_workspace(name, window, pane)
+	table.insert(available_workspaces, 1, current_workspace)
+	for i = 1, #available_workspaces do
+		local ws = available_workspaces[i]
+		if ws.label == name then
+			current_workspace = table.remove(available_workspaces, i)
+			break
+		end
+	end
+	window:perform_action(
+		actions.SwitchToWorkspace({
+			name = name,
+		}),
+		pane
+	)
+end
+
 M.search_workspaces = wezterm.action_callback(function(window, pane)
 	window:perform_action(actions.SetPaneZoomState(false), pane)
 	wezterm.emit("joewlambeth:pane-change", window, pane)
-	local summed_workspaces = {}
-	for workspace, _ in pairs(workspace_table) do
-		table.insert(summed_workspaces, { id = workspace, label = workspace })
-	end
 
 	window:perform_action(
 		actions.InputSelector({
@@ -100,14 +121,9 @@ M.search_workspaces = wezterm.action_callback(function(window, pane)
 				if not label then
 					return
 				end
-				inner_window:perform_action(
-					actions.SwitchToWorkspace({
-						name = label,
-					}),
-					inner_pane
-				)
+				switch_workspace(label, window, pane)
 			end),
-			choices = summed_workspaces,
+			choices = available_workspaces,
 			fuzzy = true,
 		}),
 		pane
