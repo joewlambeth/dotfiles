@@ -4,7 +4,7 @@ local wezterm = require("wezterm")
 local mux = wezterm.mux
 
 module.apply_to_config = function(config)
-	require("init").apply_to_config(config)
+	require("init").apply_to_config(config, "CTRL|SHIFT")
 	config.default_prog = { "wsl.exe", "-d", "Ubuntu" }
 	wezterm.on("gui-startup", function(cmd)
 		local tab, pane, window = mux.spawn_window(cmd or {})

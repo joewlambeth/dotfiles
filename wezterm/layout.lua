@@ -66,9 +66,8 @@ function M.bind_wiki()
 	local binding = M.bind_workspace("🧠 wiki", wiki_dir, function(tab, first_pane, window)
 		first_pane:split({
 			direction = "Left",
-			size = 0.35,
 			cwd = wiki_dir,
-			args = { "nvim", "wiki/index.md" },
+			args = { "zsh", "-i", "-c", "nvim" .. "wiki/index.md" },
 		})
 	end)
 
@@ -101,9 +100,38 @@ M.search_workspaces = wezterm.action_callback(function(window, pane)
 				if not label then
 					return
 				end
-				inner_window:perform_action(actions.SetActiveWorkspace(label), inner_pane)
+				inner_window:perform_action(
+					actions.SwitchToWorkspace({
+						name = label,
+					}),
+					inner_pane
+				)
 			end),
+			choices = summed_workspaces,
 			fuzzy = true,
+		}),
+		pane
+	)
+end)
+
+M.split_pane = wezterm.action_callback(function(window, pane)
+	window:perform_action(actions.SetPaneZoomState(false), pane)
+	wezterm.emit("joewlambeth:pane-change", window, pane)
+	window:perform_action(
+		actions.InputSelector({
+			action = wezterm.action_callback(function(inner_window, inner_pane, _, label)
+				local action
+				if label == "vertical" then
+					action = actions.SplitVertical({ domain = "CurrentPaneDomain" })
+				elseif label == "horizontal" then
+					action = actions.SplitHorizontal({ domain = "CurrentPaneDomain" })
+				end
+				inner_window:perform_action(action, inner_pane)
+			end),
+			choices = {
+				{ label = "vertical" },
+				{ label = "horizontal" },
+			},
 		}),
 		pane
 	)

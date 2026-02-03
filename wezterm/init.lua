@@ -3,7 +3,7 @@ local wezterm = require("wezterm")
 local layout = require("layout")
 local action = wezterm.action
 
-module.apply_to_config = function(config)
+module.apply_to_config = function(config, super)
 	config.harfbuzz_features = {
 		"calt=1",
 		"clig=1",
@@ -19,19 +19,24 @@ module.apply_to_config = function(config)
 
 	config.keys = {
 		{
-			key = "h",
-			mods = "SUPER",
+			key = "k",
+			mods = super,
 			action = layout.focus_pane,
 		},
 		{
 			key = "j",
-			mods = "SUPER",
+			mods = super,
 			action = layout.navigate_pane("Next"),
 		},
 		{
-			key = "k",
-			mods = "SUPER",
+			key = "g",
+			mods = super,
 			action = layout.search_workspaces,
+		},
+		{
+			key = "s",
+			mods = super,
+			action = layout.split_pane,
 		},
 		layout.bind_wiki(),
 		layout.bind_workspace("python", wezterm.home_dir),
