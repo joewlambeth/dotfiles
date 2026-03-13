@@ -90,4 +90,4 @@ _G.MY_STATUS = function()
 end
 
 vim.o.statuscolumn = "%{%v:lua.MY_STATUS()%}"
-vim.o.statusline = "%{FugitiveStatusline()} %f %y %m %r %= %l,%c %P"
+vim.o.statusline = "%f %y %m %r %= %l,%c %P"

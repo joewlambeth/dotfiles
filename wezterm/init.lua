@@ -29,7 +29,7 @@ module.apply_to_config = function(config, super)
 			action = layout.navigate_pane("Next"),
 		},
 		{
-			key = "g",
+			key = ";",
 			mods = super,
 			action = layout.search_workspaces,
 		},
@@ -38,8 +38,14 @@ module.apply_to_config = function(config, super)
 			mods = super,
 			action = layout.split_pane,
 		},
+		{
+			key = "e",
+			mods = super,
+			action = require("scrollback").clear_scrollback,
+		},
+		-- https://www.nerdfonts.com/cheat-sheet
 		layout.bind_wiki(),
-		layout.bind_workspace("python", wezterm.home_dir),
+		layout.bind_workspace(" dotfiles", wezterm.home_dir .. "/dotfiles"),
 	}
 	wezterm.default_workspace = "🧠 wiki"
 

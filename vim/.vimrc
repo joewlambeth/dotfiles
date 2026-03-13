@@ -34,7 +34,7 @@ hi VimwikiHeader1 ctermfg=65 cterm=bold
 hi VimwikiHeader2 ctermfg=108 cterm=bold
 hi VimwikiHeader3 ctermfg=78 cterm=bold
 
-imap <C-F> <ESC>
+imap kj <ESC>
 tmap <ESC> <C-\><C-N>
 tmap <C-F> <C-\><C-N>
 nmap <C-H> <C-W>h

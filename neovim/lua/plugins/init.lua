@@ -18,6 +18,11 @@ return {
 			duration_multiplier = 0.5,
 		},
 	},
+	{
+		"windwp/nvim-autopairs",
+		event = "InsertEnter",
+		config = true,
+	},
 
 	-- TODO: todo, ironically
 	-- lines that show scopes

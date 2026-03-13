@@ -4,6 +4,7 @@
 local servers = {
 	lua_ls = {},
 	kotlin_lsp = {},
+	ts_ls = {},
 }
 local filetypes = {
 	"bash",
@@ -31,16 +32,15 @@ return {
 		branch = "main",
 		lazy = false,
 		build = ":TSUpdate",
-		config = function ()
+		config = function()
 			require("nvim-treesitter").install(filetypes)
 			vim.api.nvim_create_autocmd("FileType", {
 				pattern = filetypes,
-				callback = function ()
+				callback = function()
 					vim.treesitter.start()
-				end
+				end,
 			})
-			
-		end
+		end,
 	},
 	{
 		"saghen/blink.cmp",
