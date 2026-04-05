@@ -9,6 +9,7 @@ local M = {}
 
 local workspace_table = {}
 local current_workspace = nil
+local available_workspace_choices = {}
 local available_workspaces = {}
 local workspace_counter = 0
 
@@ -52,8 +53,10 @@ function M.bind_workspace(name, path, mux_callback)
 		end)
 		current_workspace = { label = name }
 	else
-		table.insert(available_workspaces, { label = name })
+		table.insert(available_workspace_choices, { label = name })
 	end
+
+	available_workspaces[name] = { path = path }
 
 	workspace_counter = workspace_counter + 1
 	workspace_table[name] = { callback = mux_callback }
@@ -95,17 +98,21 @@ M.focus_pane = wezterm.action_callback(function(window, pane)
 end)
 
 local function switch_workspace(name, window, pane)
-	table.insert(available_workspaces, 1, current_workspace)
-	for i = 1, #available_workspaces do
-		local ws = available_workspaces[i]
+	table.insert(available_workspace_choices, 1, current_workspace)
+	for i = 1, #available_workspace_choices do
+		local ws = available_workspace_choices[i]
 		if ws.label == name then
-			current_workspace = table.remove(available_workspaces, i)
+			current_workspace = table.remove(available_workspace_choices, i)
 			break
 		end
 	end
+	local entry = available_workspaces[name]
 	window:perform_action(
 		actions.SwitchToWorkspace({
 			name = name,
+			spawn = {
+				cwd = entry.path,
+			},
 		}),
 		pane
 	)
@@ -123,7 +130,7 @@ M.search_workspaces = wezterm.action_callback(function(window, pane)
 				end
 				switch_workspace(label, window, pane)
 			end),
-			choices = available_workspaces,
+			choices = available_workspace_choices,
 			fuzzy = true,
 		}),
 		pane

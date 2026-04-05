@@ -8,12 +8,7 @@ M.clear_scrollback = wezterm.action_callback(function(window, pane)
 		return
 	end
 
-	window:perform_action(
-		action:Multiple({
-			action.ClearScrollback("ScrollbackAndViewport"),
-		}),
-		pane
-	)
+	window:perform_action(action.ClearScrollback("ScrollbackAndViewport"), pane)
 end)
 
 return M
