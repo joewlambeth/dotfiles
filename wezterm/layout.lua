@@ -72,19 +72,6 @@ function M.bind_workspace(name, path, mux_callback)
 	}
 end
 
-function M.bind_wiki()
-	local wiki_dir = wezterm.home_dir
-	local binding = M.bind_workspace("🧠 wiki", wiki_dir, function(tab, first_pane, window)
-		first_pane:split({
-			direction = "Left",
-			cwd = wiki_dir,
-			args = { shell, "-i", "-c", "nvim " .. wezterm.shell_quote_arg("wiki/index.md") },
-		})
-	end)
-
-	return binding
-end
-
 M.navigate_pane = function(dir)
 	return wezterm.action_callback(function(window, pane)
 		window:perform_action(actions.ActivatePaneDirection(dir), pane)
@@ -144,9 +131,10 @@ M.split_pane = wezterm.action_callback(function(window, pane)
 		actions.InputSelector({
 			action = wezterm.action_callback(function(inner_window, inner_pane, _, label)
 				local action
-				if label == "vertical" then
+				-- i know these are backwards. This is to be consistent with VIM
+				if label == "horizontal" then
 					action = actions.SplitVertical({ domain = "CurrentPaneDomain" })
-				elseif label == "horizontal" then
+				elseif label == "vertical" then
 					action = actions.SplitHorizontal({ domain = "CurrentPaneDomain" })
 				end
 				inner_window:perform_action(action, inner_pane)
@@ -159,5 +147,27 @@ M.split_pane = wezterm.action_callback(function(window, pane)
 		pane
 	)
 end)
+
+local function is_vim(pane)
+	local process_info = pane:get_foreground_process_info()
+	local process_name = process_info and process_info.name
+
+	return process_name == "nvim" or process_name == "vim"
+end
+
+function M.bind_next_pane(mod, key)
+	local callback = wezterm.action_callback(function(window, pane)
+		if is_vim(pane) then
+			-- pass the keys through to vim/nvim
+			window:perform_action({
+				SendKey = { key = key, mods = mod },
+			}, pane)
+		else
+			window:perform_action({ ActivatePaneDirection = "Next" }, pane)
+		end
+	end)
+
+	return { key = key, mods = mod, action = callback }
+end
 
 return M

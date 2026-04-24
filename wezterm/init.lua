@@ -23,11 +23,7 @@ module.apply_to_config = function(config, super)
 			mods = super,
 			action = layout.focus_pane,
 		},
-		{
-			key = "j",
-			mods = super,
-			action = layout.navigate_pane("Next"),
-		},
+		layout.bind_next_pane(super, "j"),
 		{
 			key = ";",
 			mods = super,
@@ -44,10 +40,10 @@ module.apply_to_config = function(config, super)
 			action = require("scrollback").clear_scrollback,
 		},
 		-- https://www.nerdfonts.com/cheat-sheet
-		layout.bind_wiki(),
+		layout.bind_workspace(" home", wezterm.home_dir),
 		layout.bind_workspace(" dotfiles", wezterm.home_dir .. "/dotfiles"),
 	}
-	wezterm.default_workspace = "🧠 wiki"
+	wezterm.default_workspace = " home"
 
 	wezterm.action.SwitchToWorkspace({ name = layout.first_workspace })
 end
