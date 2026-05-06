@@ -1,7 +1,6 @@
 local module = {}
 local wezterm = require("wezterm")
 local layout = require("layout")
-local action = wezterm.action
 
 module.apply_to_config = function(config, super)
 	config.harfbuzz_features = {
@@ -11,6 +10,7 @@ module.apply_to_config = function(config, super)
 	}
 	config.use_fancy_tab_bar = false
 	config.enable_tab_bar = true
+	config.tab_max_width = 100
 
 	config.inactive_pane_hsb = {
 		saturation = 0.8,
@@ -25,9 +25,9 @@ module.apply_to_config = function(config, super)
 		},
 		layout.bind_next_pane(super, "j"),
 		{
-			key = ";",
+			key = "r",
 			mods = super,
-			action = layout.search_workspaces,
+			action = layout.rename_tab,
 		},
 		{
 			key = "s",
@@ -39,13 +39,19 @@ module.apply_to_config = function(config, super)
 			mods = super,
 			action = require("scrollback").clear_scrollback,
 		},
-		-- https://www.nerdfonts.com/cheat-sheet
-		layout.bind_workspace(" home", wezterm.home_dir),
-		layout.bind_workspace(" dotfiles", wezterm.home_dir .. "/dotfiles"),
+		{
+			key = "o",
+			mods = super,
+			action = require("scrollback").edit_command,
+		},
 	}
-	wezterm.default_workspace = " home"
-
-	wezterm.action.SwitchToWorkspace({ name = layout.first_workspace })
+	for i = 1, 9 do
+		table.insert(config.keys, {
+			key = tostring(i),
+			mods = super,
+			action = layout.activate_tab(i - 1),
+		})
+	end
 end
 
 return module

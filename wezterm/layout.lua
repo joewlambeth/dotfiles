@@ -1,132 +1,116 @@
 local wezterm = require("wezterm")
 local actions = wezterm.action
 local mux = wezterm.mux
-local os = require("os")
-
-local shell = os.getenv("SHELL") or "/bin/bash"
 
 local M = {}
 
-local workspace_table = {}
-local current_workspace = nil
-local available_workspace_choices = {}
-local available_workspaces = {}
-local workspace_counter = 0
+-- https://www.nerdfonts.com/cheat-sheet
+local icon_choices = {
+	{ id = "󰋜 home", label = "󰋜  home" },
+	{ id = " dotfiles", label = "  dotfiles" },
+	{ id = "󰣪 skill-tools", label = "󰣪  skill-tools" },
+	{ id = "󰏫 scratch", label = "󰏫  scratch" },
+}
 
-wezterm.on("update-status", function(window, pane)
-	local workspace = window:active_workspace()
-	window:set_left_status(wezterm.format({ { Text = " " .. workspace .. " " } }))
-end)
+local ZOOM_PREFIX = ""
+local is_zoomed = false
 
-wezterm.on("joewlambeth:pane-change", function(window, pane)
-	local is_zoomed = false
-	for _, item in ipairs(window:active_tab():panes_with_info()) do
-		if item.is_zoomed then
-			is_zoomed = true
-		end
-	end
-
-	if is_zoomed then
-		window:set_config_overrides({
-			enable_tab_bar = false,
-		})
+local function toggle_zoom(window, pane, state)
+	if state == nil then
+		is_zoomed = not is_zoomed
 	else
-		window:set_config_overrides({
-			enable_tab_bar = true,
-		})
+		is_zoomed = state
 	end
-end)
-
-function M.bind_workspace(name, path, mux_callback)
-	if workspace_counter == 0 then
-		M.first_workspace = name
-		wezterm.on("gui-startup", function(cmd)
-			local tab, build_pane, window = mux.spawn_window({
-				workspace = name,
-				cwd = path,
-			})
-			window:gui_window():maximize()
-			if mux_callback then
-				mux_callback(tab, build_pane, window)
-			end
-			mux.set_active_workspace(name)
-		end)
-		current_workspace = { label = name }
-	else
-		table.insert(available_workspace_choices, { label = name })
-	end
-
-	available_workspaces[name] = { path = path }
-
-	workspace_counter = workspace_counter + 1
-	workspace_table[name] = { callback = mux_callback }
-	return {
-		key = tostring(workspace_counter),
-		mods = "SUPER|SHIFT",
-		action = actions.SwitchToWorkspace({
-			name = name,
-			spawn = {
-				cwd = path,
-			},
-		}),
-	}
+	window:perform_action(actions.SetPaneZoomState(is_zoomed), pane)
 end
 
-M.navigate_pane = function(dir)
-	return wezterm.action_callback(function(window, pane)
-		window:perform_action(actions.ActivatePaneDirection(dir), pane)
-		wezterm.emit("joewlambeth:pane-change", window, pane)
-	end)
-end
+wezterm.on("format-tab-title", function(tab, _, panes, _, _, _)
+	local title = (tab.tab_title or ""):gsub("^" .. ZOOM_PREFIX, "")
+	if title == "" then
+		title = tab.active_pane.title
+	end
 
-M.focus_pane = wezterm.action_callback(function(window, pane)
-	window:perform_action(actions.TogglePaneZoomState, pane)
-	wezterm.emit("joewlambeth:pane-change", window, pane)
-end)
-
-local function switch_workspace(name, window, pane)
-	table.insert(available_workspace_choices, 1, current_workspace)
-	for i = 1, #available_workspace_choices do
-		local ws = available_workspace_choices[i]
-		if ws.label == name then
-			current_workspace = table.remove(available_workspace_choices, i)
+	local zoomed = false
+	for _, p in ipairs(panes) do
+		if p.is_zoomed then
+			zoomed = true
 			break
 		end
 	end
-	local entry = available_workspaces[name]
-	window:perform_action(
-		actions.SwitchToWorkspace({
-			name = name,
-			spawn = {
-				cwd = entry.path,
-			},
-		}),
-		pane
-	)
+
+	local bg = tab.is_active and "#2b2042" or "#1b1032"
+	local fg = tab.is_active and "#c0c0c0" or "#808080"
+	local text
+	if not zoomed then
+		text = (tab.tab_index + 1) .. ": " .. title
+	elseif tab.is_active then
+		bg, fg = fg, bg
+		text = ZOOM_PREFIX .. " " .. title
+	else
+		text = (tab.tab_index + 1)
+	end
+
+	return {
+		{ Background = { Color = bg } },
+		{ Foreground = { Color = fg } },
+		{ Text = " " .. text .. " " },
+	}
+end)
+
+wezterm.on("gui-startup", function()
+	local _, _, window = mux.spawn_window({})
+	window:gui_window():maximize()
+end)
+
+M.focus_pane = wezterm.action_callback(function(window, pane)
+	toggle_zoom(window, pane)
+end)
+
+M.activate_tab = function(index)
+	return wezterm.action_callback(function(window, pane)
+		toggle_zoom(window, pane, false)
+		window:perform_action(actions.ActivateTab(index), pane)
+	end)
 end
 
-M.search_workspaces = wezterm.action_callback(function(window, pane)
-	window:perform_action(actions.SetPaneZoomState(false), pane)
-	wezterm.emit("joewlambeth:pane-change", window, pane)
+M.rename_tab = wezterm.action_callback(function(window, pane)
+	local choices = { { id = "__custom__", label = "[ Custom name... ]" } }
+	for _, choice in ipairs(icon_choices) do
+		table.insert(choices, choice)
+	end
 
 	window:perform_action(
 		actions.InputSelector({
-			action = wezterm.action_callback(function(inner_window, inner_pane, id, label)
-				if not label then
+			title = "Rename Tab",
+			choices = choices,
+			fuzzy = true,
+			action = wezterm.action_callback(function(inner_window, inner_pane, id, _)
+				if not id then
 					return
 				end
-				switch_workspace(label, window, pane)
+				if id == "__custom__" then
+					inner_window:perform_action(
+						actions.PromptInputLine({
+							description = "Tab name:",
+							action = wezterm.action_callback(function(prompt_window, _, line)
+								if line and line ~= "" then
+									prompt_window:active_tab():set_title(line)
+								end
+							end),
+						}),
+						inner_pane
+					)
+				else
+					inner_window:active_tab():set_title(id)
+				end
 			end),
-			choices = available_workspace_choices,
-			fuzzy = true,
 		}),
 		pane
 	)
 end)
 
 M.split_pane = wezterm.action_callback(function(window, pane)
-	window:perform_action(actions.SetPaneZoomState(false), pane)
-	wezterm.emit("joewlambeth:pane-change", window, pane)
+	toggle_zoom(window, pane, false)
 	window:perform_action(
 		actions.InputSelector({
 			action = wezterm.action_callback(function(inner_window, inner_pane, _, label)
@@ -151,14 +135,12 @@ end)
 local function is_vim(pane)
 	local process_info = pane:get_foreground_process_info()
 	local process_name = process_info and process_info.name
-
 	return process_name == "nvim" or process_name == "vim"
 end
 
 function M.bind_next_pane(mod, key)
 	local callback = wezterm.action_callback(function(window, pane)
 		if is_vim(pane) then
-			-- pass the keys through to vim/nvim
 			window:perform_action({
 				SendKey = { key = key, mods = "CTRL|SHIFT" },
 			}, pane)
