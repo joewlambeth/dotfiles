@@ -1,0 +1,8 @@
+nvim
+apt install ripgrep || brew install ripgrep
+fd
+apt install clang
+
+install manually || brew install lua-language-server
+npm -g install pyright
+cargo install stylua

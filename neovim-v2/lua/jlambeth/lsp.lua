@@ -10,7 +10,7 @@ local servers = {
 	},
 	pyright = {
 		cmd = { "pyright-langserver", "--stdio" },
-		filetypes = { "py" },
+		filetypes = { "python" },
 	},
 }
 

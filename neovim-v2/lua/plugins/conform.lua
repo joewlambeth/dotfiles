@@ -16,13 +16,13 @@ conform.setup({
 
 vim.keymap.set("n", "<leader>cc", conform.format, { desc = "[C]onform [C]ode" })
 
-local on_save = true
+local auto_format = true
 _G.conform_toggle = function()
-	return on_save and "ON" or "OFF"
+	return auto_format and "ON" or "OFF"
 end
 
 vim.keymap.set("n", "<leader>ca", function()
-	on_save = not on_save
+	auto_format = not auto_format
 	vim.cmd("redrawstatus")
 	print("Automatic formatting turned " .. conform_toggle())
 end, { desc = "[C]onform [A]utomatic Toggle" })
@@ -30,7 +30,7 @@ end, { desc = "[C]onform [A]utomatic Toggle" })
 vim.api.nvim_create_autocmd("BufWritePre", {
 	pattern = "*",
 	callback = function(args)
-		if on_save then
+		if auto_format then
 			require("conform").format({ bufnr = args.buf })
 		end
 	end,

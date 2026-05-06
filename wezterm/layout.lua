@@ -160,7 +160,7 @@ function M.bind_next_pane(mod, key)
 		if is_vim(pane) then
 			-- pass the keys through to vim/nvim
 			window:perform_action({
-				SendKey = { key = key, mods = mod },
+				SendKey = { key = key, mods = "CTRL|SHIFT" },
 			}, pane)
 		else
 			window:perform_action({ ActivatePaneDirection = "Next" }, pane)
