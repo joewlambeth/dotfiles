@@ -1,7 +1,6 @@
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
-require("jlambeth.lsp")
 require("jlambeth.statuscolumn")
 require("jlambeth.wezterm")
 
