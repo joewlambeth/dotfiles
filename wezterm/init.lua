@@ -17,6 +17,14 @@ module.apply_to_config = function(config, super)
 		brightness = 0.5,
 	}
 
+	config.font = wezterm.font("JetBrains Mono Nerd Font")
+	config.window_padding = { left = 8, right = 8, top = 4, bottom = 4 }
+	config.window_background_gradient = {
+		colors = { "#000000", "#1A1A1A" },
+		noise = 128,
+		orientation = { Linear = { angle = -45.0 } },
+	}
+
 	config.keys = {
 		{
 			key = "k",

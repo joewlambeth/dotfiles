@@ -13,16 +13,6 @@ local icon_choices = {
 }
 
 local ZOOM_PREFIX = ""
-local is_zoomed = false
-
-local function toggle_zoom(window, pane, state)
-	if state == nil then
-		is_zoomed = not is_zoomed
-	else
-		is_zoomed = state
-	end
-	window:perform_action(actions.SetPaneZoomState(is_zoomed), pane)
-end
 
 wezterm.on("format-tab-title", function(tab, _, panes, _, _, _)
 	local title = (tab.tab_title or ""):gsub("^" .. ZOOM_PREFIX, "")
@@ -63,12 +53,12 @@ wezterm.on("gui-startup", function()
 end)
 
 M.focus_pane = wezterm.action_callback(function(window, pane)
-	toggle_zoom(window, pane)
+	window:perform_action(actions.TogglePaneZoomState, pane)
 end)
 
 M.activate_tab = function(index)
 	return wezterm.action_callback(function(window, pane)
-		toggle_zoom(window, pane, false)
+		window:perform_action(actions.SetPaneZoomState(false), pane)
 		window:perform_action(actions.ActivateTab(index), pane)
 	end)
 end
@@ -110,22 +100,21 @@ M.rename_tab = wezterm.action_callback(function(window, pane)
 end)
 
 M.split_pane = wezterm.action_callback(function(window, pane)
-	toggle_zoom(window, pane, false)
+	window:perform_action(actions.SetPaneZoomState(false), pane)
 	window:perform_action(
 		actions.InputSelector({
-			action = wezterm.action_callback(function(inner_window, inner_pane, _, label)
+			action = wezterm.action_callback(function(inner_window, inner_pane, id, _)
 				local action
-				-- i know these are backwards. This is to be consistent with VIM
-				if label == "horizontal" then
-					action = actions.SplitVertical({ domain = "CurrentPaneDomain" })
-				elseif label == "vertical" then
+				if id == "vertical" then
 					action = actions.SplitHorizontal({ domain = "CurrentPaneDomain" })
+				elseif id == "horizontal" then
+					action = actions.SplitVertical({ domain = "CurrentPaneDomain" })
 				end
 				inner_window:perform_action(action, inner_pane)
 			end),
 			choices = {
-				{ label = "vertical" },
-				{ label = "horizontal" },
+				{ id = "vertical", label = "│  vertical" },
+				{ id = "horizontal", label = "─  horizontal" },
 			},
 		}),
 		pane
