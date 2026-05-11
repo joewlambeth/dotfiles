@@ -125,22 +125,22 @@ export CLICOLOR=1
 
 precmd() {
 	EXIT_STATUS=$?
-	EXIT_STATUS_COLOR="\e[34m"
+	EXIT_STATUS_COLOR="\[\e[34m\]"
 	GIT_BRANCH=$(git symbolic-ref --short HEAD 2> /dev/null)
 
 	if [ $EXIT_STATUS -ne 0 ]; then
-		EXIT_STATUS_COLOR="\e[91m"
+		EXIT_STATUS_COLOR="\[\e[91m\]"
 	fi
 	NUM_JOBS=$(jobs | wc -l)
 
-	[ -n GIT_BRANCH ] && GIT_BRANCH=" \e[92m($GIT_BRANCH)\e[0m"
+	[ -n "$GIT_BRANCH" ] && GIT_BRANCH=" \[\e[92m\]($GIT_BRANCH)\[\e[0m\]"
 
 	RPS1="[$NUM_JOBS jobs]"
 
-	PS_EXIT=" $EXIT_STATUS_COLOR[$EXIT_STATUS]\e[0m "
+	PS_EXIT=" $EXIT_STATUS_COLOR[$EXIT_STATUS]\[\e[0m\] "
 	PS_PATH="\w$GIT_BRANCH"
 
-	export PS1="$PS_EXIT$PS_HOST\e[32m$PS_PATH >\e[0m"
+	export PS1="$PS_EXIT$PS_HOST\[\e[32m\]$PS_PATH >\[\e[0m\]"
 }
 
 export PROMPT_COMMAND=precmd
