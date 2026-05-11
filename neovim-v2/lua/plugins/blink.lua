@@ -1,12 +1,17 @@
 vim.pack.add({
 	gh("saghen/blink.lib"),
 	gh("saghen/blink.cmp"),
+	gh("rafamadriz/friendly-snippets"),
 })
 
 local cmp = require("blink.cmp")
 cmp.build():wait(60000)
 cmp.setup({
 	keymap = { preset = "default" },
+	sources = {
+		default = { "lsp", "path", "snippets", "buffer" },
+	},
+	snippets = { preset = "default" },
 	completion = {
 		accept = {
 			-- Enable auto-brackets to automatically jump into ()

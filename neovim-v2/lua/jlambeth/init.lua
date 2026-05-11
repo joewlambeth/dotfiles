@@ -1,5 +1,5 @@
 vim.g.mapleader = " "
-vim.g.maplocalleader = " "
+vim.g.maplocalleader = ","
 
 require("jlambeth.statuscolumn")
 require("jlambeth.wezterm")
@@ -43,6 +43,9 @@ vim.keymap.set("v", ">", ">gv", { desc = "Indent right and reselect" })
 vim.keymap.set("v", "<", "<gv", { desc = "Indent left and reselect" })
 
 vim.keymap.set("n", "Q", "<nop>")
+
+vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Next diagnostic" })
+vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "Prev diagnostic" })
 
 vim.g.have_nerd_font = true -- Set to true if you have a Nerd Font installed and selected in the terminal
 

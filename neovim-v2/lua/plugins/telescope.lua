@@ -4,6 +4,18 @@ vim.pack.add({
 	-- gh("nvim-telescope/telescope-fzf-native.nvim"),
 })
 
+-- local telescope_main = require("telescope")
+-- telescope_main.setup({
+-- 	extensions = {
+-- 		fzf = {
+-- 			fuzzy = true,
+-- 			override_generic_sorter = true,
+-- 			override_file_sorter = true,
+-- 		},
+-- 	},
+-- })
+-- telescope_main.load_extension("fzf")
+
 local telescope = require("telescope.builtin")
 
 vim.keymap.set("n", "<leader>ft", telescope.builtin, { desc = "[F]ind [T]elescopes" })

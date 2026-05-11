@@ -12,6 +12,18 @@ local servers = {
 		cmd = { "pyright-langserver", "--stdio" },
 		filetypes = { "python" },
 	},
+	ts_ls = {
+		cmd = { "typescript-language-server", "--stdio" },
+		filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact" },
+	},
+	bashls = {
+		cmd = { "bash-language-server", "start" },
+		filetypes = { "sh", "bash" },
+	},
+	kotlin_lsp = {
+		cmd = { "kotlin-lsp" },
+		filetypes = { "kotlin" },
+	},
 }
 
 for name, config in pairs(servers) do
