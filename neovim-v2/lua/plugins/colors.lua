@@ -4,14 +4,16 @@ vim.pack.add({
 
 vim.g.everforest_enable_italic = true
 vim.g.everforest_background = "hard"
+vim.g.everforest_dim_inactive_windows = 1
+-- vim.g.everforest_transparent_background = 1
 vim.cmd.colorscheme("everforest")
-vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
-vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
-vim.api.nvim_set_hl(0, "NormalNC", { bg = "none" })
-vim.api.nvim_set_hl(0, "FloatBorder", { bg = "none" })
-vim.api.nvim_set_hl(0, "FloatTitle", { bg = "none" })
-vim.api.nvim_set_hl(0, "FloatFooter", { bg = "none" })
-vim.api.nvim_set_hl(0, "EndOfBuffer", { bg = "none" })
+-- vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
+-- vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
+-- vim.api.nvim_set_hl(0, "NormalNC", { bg = "none" })
+-- vim.api.nvim_set_hl(0, "FloatBorder", { bg = "none" })
+-- vim.api.nvim_set_hl(0, "FloatTitle", { bg = "none" })
+-- vim.api.nvim_set_hl(0, "FloatFooter", { bg = "none" })
+-- vim.api.nvim_set_hl(0, "EndOfBuffer", { bg = "none" })
 
 vim.api.nvim_set_hl(0, "StGit", { bg = "#55544a", fg = "#ebdbb2" })
 vim.api.nvim_set_hl(0, "StFile", { bg = "#3c4841", fg = "#fbf1c7" })

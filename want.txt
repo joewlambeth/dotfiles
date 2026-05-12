@@ -1,6 +1,6 @@
 nvim
 cargo install ripgrep
-fd
+cargo install fd-find
 apt install clang
 
 install manually || brew install lua-language-server
