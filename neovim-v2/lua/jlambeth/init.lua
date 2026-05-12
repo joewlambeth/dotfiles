@@ -82,6 +82,36 @@ vim.opt.colorcolumn = "120"
 vim.o.winborder = "rounded"
 
 vim.diagnostic.config({
-	virtual_text = true,
-	virtual_lines = false,
+	virtual_text = { current_line = false },
+	virtual_lines = {
+		current_line = true,
+		format = function(diagnostic)
+			local max_width = 80
+			local msg = diagnostic.message
+			if #msg <= max_width then
+				return msg
+			end
+			local lines = {}
+			local current = ""
+			for word in msg:gmatch("%S+") do
+				if current == "" then
+					if #word > max_width then
+						table.insert(lines, word:sub(1, max_width))
+						current = word:sub(max_width + 1)
+					else
+						current = word
+					end
+				elseif #current + 1 + #word <= max_width then
+					current = current .. " " .. word
+				else
+					table.insert(lines, current)
+					current = word
+				end
+			end
+			if current ~= "" then
+				table.insert(lines, current)
+			end
+			return table.concat(lines, "\n")
+		end,
+	},
 })
