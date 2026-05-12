@@ -56,3 +56,9 @@ vim.keymap.set("n", "<leader>gg", function()
 end, {
 	desc = "[G]it [G]o",
 })
+
+require("diffview").setup()
+
+vim.keymap.set("n", "<leader>gv", "<cmd>DiffviewOpen<cr>", { desc = "[G]it [V]iew" })
+vim.keymap.set("n", "<leader>gV", "<cmd>DiffviewClose<cr>", { desc = "[G]it [V]iew Close" })
+vim.keymap.set("n", "<leader>gh", "<cmd>DiffviewFileHistory %<cr>", { desc = "[G]it File [H]istory" })
