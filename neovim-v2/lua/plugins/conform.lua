@@ -11,7 +11,7 @@ conform.setup({
 		javascript = { "prettier" },
 		javascriptreact = { "prettier" },
 		json = { "jq" },
-		python = { "autopep8" },
+		python = { "autopep8", "black" },
 	},
 })
 
