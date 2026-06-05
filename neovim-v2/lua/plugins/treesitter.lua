@@ -12,6 +12,7 @@ local filetypes = {
 	"kotlin",
 	"python",
 	"typescript",
+	"go",
 }
 
 vim.pack.add({

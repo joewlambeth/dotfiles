@@ -161,3 +161,15 @@ elif command -v vim &>/dev/null; then
 else
   export EDITOR="vi"
 fi
+
+_edit_wo_executing() {
+    local editor="${EDITOR:-nano}"
+    tmpf="$(mktemp)"
+    printf '%s\n' "$READLINE_LINE" > "$tmpf"
+    "$editor" "$tmpf"
+    READLINE_LINE="$(<"$tmpf")"
+    READLINE_POINT="${#READLINE_LINE}"
+    rm -f "$tmpf"  # -f for those who have alias rm='rm -i'
+}
+
+bind -x '"\C-x\C-e":_edit_wo_executing'

@@ -5,6 +5,7 @@ apt install clang
 
 install manually || brew install lua-language-server
 npm -g install pyright
+npm -g install prettier
 cargo install stylua
 
 https://github.com/nvim-telescope/telescope-fzf-native.nvim.git && make

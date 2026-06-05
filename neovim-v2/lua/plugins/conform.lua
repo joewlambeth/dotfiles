@@ -12,6 +12,12 @@ conform.setup({
 		javascriptreact = { "prettier" },
 		json = { "jq" },
 		python = { "autopep8", "black" },
+		go = { "gofmt" },
+	},
+	formatters = {
+		jq = {
+			append_args = { "--indent", "2" },
+		},
 	},
 })
 

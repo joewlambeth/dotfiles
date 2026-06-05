@@ -38,6 +38,7 @@ precmd() {
     PS_PATH="%F{green}%~%f$GIT_BRANCH"
     export PS1=" $PS_TIME$PS_EXIT$PS_HOST$PS_PATH %F{245}>%f"
 }
+zle_highlight=(default:underline)
 
 netjps() {
   if [ -z "$1" ]; then
@@ -61,3 +62,5 @@ TRAPALRM() {
     precmd
     zle reset-prompt
 }
+
+autoload -U edit-command-line && zle -N edit-command-line && bindkey'^x^e' edit-command-line

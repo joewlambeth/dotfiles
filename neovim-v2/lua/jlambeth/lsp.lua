@@ -21,8 +21,12 @@ local servers = {
 		filetypes = { "sh", "bash" },
 	},
 	kotlin_lsp = {
-		cmd = { "kotlin-lsp" },
+		cmd = { "kotlin-lsp", "--stdio" },
 		filetypes = { "kotlin" },
+	},
+	gopls = {
+		cmd = { "gopls" },
+		filetypes = { "go" },
 	},
 }
 
