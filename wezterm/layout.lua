@@ -5,11 +5,13 @@ local mux = wezterm.mux
 local M = {}
 
 -- https://www.nerdfonts.com/cheat-sheet
-local icon_choices = {
-	{ id = "󰋜 home", label = "󰋜  home" },
-	{ id = " dotfiles", label = "  dotfiles" },
-	{ id = "󰣪 skill-tools", label = "󰣪  skill-tools" },
-	{ id = "󰏫 scratch", label = "󰏫  scratch" },
+local glyph_choices = {
+	{ id = "none", label = "(none)" },
+	{ id = "󰋜 ", label = "󰋜 home" },
+	{ id = "󰏫 ", label = "󰏫 edit" },
+	{ id = "󰣪 ", label = "󰣪 dotfiles" },
+	{ id = " ", label = " python" },
+	{ id = " ", label = " node" },
 }
 
 local ZOOM_PREFIX = ""
@@ -64,35 +66,40 @@ M.activate_tab = function(index)
 end
 
 M.rename_tab = wezterm.action_callback(function(window, pane)
-	local choices = { { id = "__custom__", label = "[ Custom name... ]" } }
-	for _, choice in ipairs(icon_choices) do
-		table.insert(choices, choice)
+	local current_title = window:active_tab():get_title()
+	local current_name = current_title
+	for _, choice in ipairs(glyph_choices) do
+		if choice.id ~= "none" and current_title:sub(1, #choice.id) == choice.id then
+			current_name = current_title:sub(#choice.id + 1)
+			break
+		end
 	end
 
 	window:perform_action(
-		actions.InputSelector({
-			title = "Rename Tab",
-			choices = choices,
-			fuzzy = true,
-			action = wezterm.action_callback(function(inner_window, inner_pane, id, _)
-				if not id then
+		actions.PromptInputLine({
+			description = "Tab name:",
+			-- TODO: this will be good later
+			-- initial_value = current_name,
+			action = wezterm.action_callback(function(inner_window, inner_pane, line)
+				if not line or line == "" then
 					return
 				end
-				if id == "__custom__" then
-					inner_window:perform_action(
-						actions.PromptInputLine({
-							description = "Tab name:",
-							action = wezterm.action_callback(function(prompt_window, _, line)
-								if line and line ~= "" then
-									prompt_window:active_tab():set_title(line)
-								end
-							end),
-						}),
-						inner_pane
-					)
-				else
-					inner_window:active_tab():set_title(id)
-				end
+				inner_window:perform_action(
+					actions.InputSelector({
+						title = "Tab Icon",
+						choices = glyph_choices,
+						fuzzy = true,
+						action = wezterm.action_callback(function(prompt_window, _, id, _)
+							if not id then
+								return
+							end
+							local glyph = id ~= "none" and id or nil
+							local title = glyph and (glyph .. line) or line
+							prompt_window:active_tab():set_title(title)
+						end),
+					}),
+					inner_pane
+				)
 			end),
 		}),
 		pane
