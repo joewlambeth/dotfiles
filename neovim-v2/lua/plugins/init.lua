@@ -4,8 +4,8 @@ end
 
 require("plugins.colors")
 require("plugins.conform")
-require("plugins.git")
 require("plugins.telescope")
+require("plugins.git")
 require("plugins.treesitter")
 -- require("plugins.wiki")
 
