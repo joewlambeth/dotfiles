@@ -7,5 +7,3 @@ require("plugins")
 
 require("plugins.blink")
 require("jlambeth.lsp")
-
-require("joeswiki")

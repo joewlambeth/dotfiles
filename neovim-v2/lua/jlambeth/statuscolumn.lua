@@ -24,8 +24,19 @@ vim.api.nvim_create_autocmd("WinLeave", {
 })
 
 _G.MY_STATUS = function()
-	local screen_height = math.max(2, #tostring(vim.api.nvim_win_get_height(0)))
 	local buffer_height = math.max(3, #tostring(vim.api.nvim_buf_line_count(0)))
+	local folded = vim.fn.foldclosed(vim.v.lnum) ~= -1
+	local has_max_fold = false
+
+	for i = 10 ^ (buffer_height - 1), vim.fn.line("$") do
+		if vim.fn.foldclosed(i) > 0 then
+			has_max_fold = true
+			break
+		end
+	end
+
+	local screen_height = math.max(2, #tostring(vim.api.nvim_win_get_height(0)))
+	buffer_height = buffer_height + (has_max_fold and 1 or 0)
 	local current_win_bufnr = vim.api.nvim_get_current_buf()
 
 	if vim.api.nvim_get_option_value("buftype", {}) == "nofile" then
@@ -46,7 +57,7 @@ _G.MY_STATUS = function()
 		local item = v[4]
 
 		if item.sign_hl_group:match("^Git") then
-			git_border = "%#" .. item.sign_hl_group .. "#" .. item.sign_text, 1, 2
+			git_border = "%#" .. item.sign_hl_group .. "#" .. item.sign_text
 		elseif priority >= item.priority then
 			winner = "%#" .. item.sign_hl_group .. "#" .. vim.fn.strcharpart(item.sign_text, 0, 1) .. "%#Normal#"
 			priority = item.priority
@@ -55,6 +66,13 @@ _G.MY_STATUS = function()
 
 	local drawn_win = vim.api.nvim_get_current_win()
 	local focused = tonumber(vim.g.actual_curwin) == tonumber(drawn_win)
+	local fold_format = function(format_name)
+		if folded then
+			return "%#" .. format_name .. "Fold" .. "#"
+		else
+			return "%#" .. format_name .. "#"
+		end
+	end
 
 	local border = function()
 		return git_border or "%#Normal#│"
@@ -77,7 +95,7 @@ _G.MY_STATUS = function()
 	end
 
 	local lnum = function()
-		return string.format("%" .. buffer_height .. "s", show_wrap(vim.v.lnum, ".."))
+		return string.format("%" .. buffer_height .. "s", show_wrap(vim.v.lnum .. (folded and "+" or ""), ".."))
 	end
 
 	local text
@@ -85,8 +103,8 @@ _G.MY_STATUS = function()
 		text = string.format(
 			"%s %s %s %s",
 			winner or " ",
-			"%#Yellow#" .. rnu() .. "%#Normal#",
-			"%#Orange#" .. lnum() .. "%#Normal#",
+			fold_format("ScRnum") .. rnu() .. "%#Normal#",
+			fold_format("ScLnum") .. lnum() .. "%#Normal#",
 			border()
 		)
 	else

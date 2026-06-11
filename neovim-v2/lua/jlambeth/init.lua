@@ -12,7 +12,9 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 	end,
 })
 
-vim.keymap.set("n", "<leader>e", "<Cmd>Ex<CR>", { desc = "[E]xplore" })
+vim.keymap.set("n", "<leader>e", function()
+	vim.cmd("Ex")
+end, { desc = "[E]xplore" })
 vim.keymap.set("i", "kj", "<Esc>")
 vim.keymap.set("n", "<C-h>", "<C-w><C-h>", { desc = "Move focus to the left window" })
 vim.keymap.set("n", "<C-l>", "<C-w><C-l>", { desc = "Move focus to the right window" })
@@ -80,6 +82,23 @@ vim.opt.tabstop = 4
 
 vim.opt.colorcolumn = "120"
 vim.o.winborder = "rounded"
+
+vim.keymap.set("n", "<Tab>", function()
+	-- this is not the same as "zA" (although it should be)
+	if vim.fn.foldclosed(".") > 0 then
+		vim.cmd("foldo")
+	elseif vim.fn.foldlevel(".") then
+		vim.cmd("foldc")
+	end
+end)
+
+vim.keymap.set("n", "<CR>", function()
+	if vim.fn.foldclosed(".") > 0 then
+		vim.cmd("foldo!")
+	else
+		vim.cmd("nohlsearch")
+	end
+end)
 
 vim.diagnostic.config({
 	virtual_text = { current_line = false },

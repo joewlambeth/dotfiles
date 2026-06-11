@@ -22,3 +22,8 @@ vim.api.nvim_set_hl(0, "StMid", { bg = "#282828", fg = "#a89984" })
 vim.api.nvim_set_hl(0, "StAFYes", { bg = "#3f5865", fg = "#fbf1c7" })
 vim.api.nvim_set_hl(0, "StAFNo", { bg = "#59464c", fg = "#fbf1c7" })
 vim.api.nvim_set_hl(0, "StPos", { bg = "#b16286", fg = "#fbf1c7" })
+
+vim.api.nvim_set_hl(0, "ScLnum", { bg = "NONE", fg = "#e69875" })
+vim.api.nvim_set_hl(0, "ScLnumFold", { bg = "NONE", fg = "#e69875", bold = true })
+vim.api.nvim_set_hl(0, "ScRnum", { bg = "NONE", fg = "#dbbc7f" })
+vim.api.nvim_set_hl(0, "ScRnumFold", { bg = "NONE", fg = "#dbbc7f", bold = true })

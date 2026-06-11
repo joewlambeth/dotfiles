@@ -63,4 +63,4 @@ TRAPALRM() {
     zle reset-prompt
 }
 
-autoload -U edit-command-line && zle -N edit-command-line && bindkey'^x^e' edit-command-line
+autoload -U edit-command-line && zle -N edit-command-line && bindkey '^x^e' edit-command-line

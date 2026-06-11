@@ -23,6 +23,7 @@ local servers = {
 	kotlin_lsp = {
 		cmd = { "kotlin-lsp", "--stdio" },
 		filetypes = { "kotlin" },
+		root_markers = { "build.gradle", "build.gradle.kts", "pom.xml" },
 	},
 	gopls = {
 		cmd = { "gopls" },

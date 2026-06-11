@@ -7,7 +7,8 @@ require("plugins.conform")
 require("plugins.telescope")
 require("plugins.git")
 require("plugins.treesitter")
--- require("plugins.wiki")
+require("plugins.wiki")
+require("plugins.ufo")
 
 vim.pack.add({
 	gh("tpope/vim-sleuth"),
