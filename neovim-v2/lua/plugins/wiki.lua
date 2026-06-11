@@ -28,7 +28,7 @@ end, { desc = "[F]ind [A]rticles" })
 
 vim.keymap.set("n", "<leader>mh", function()
 	vim.cmd([[silent write !pandoc -f markdown -t html -o /tmp/x.html && open /tmpp/x.html]])
-end, { desc = "[M]arkdwon [H]TML" })
+end, { desc = "[M]arkdown [H]TML" })
 
 local M = {}
 

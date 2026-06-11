@@ -87,7 +87,7 @@ vim.keymap.set("n", "<Tab>", function()
 	-- this is not the same as "zA" (although it should be)
 	if vim.fn.foldclosed(".") > 0 then
 		vim.cmd("foldo")
-	elseif vim.fn.foldlevel(".") then
+	elseif vim.fn.foldlevel(".") > 0 then
 		vim.cmd("foldc")
 	end
 end)

@@ -13,7 +13,7 @@ vim.keymap.set("n", "n", "nzzzv", { silent = true })
 vim.keymap.set("n", "N", "Nzzzv", { silent = true })
 
 vim.keymap.set("n", "zR", require("ufo").openAllFolds)
-vim.keymap.set("n", "zR", require("ufo").closeAllFolds)
+vim.keymap.set("n", "zM", require("ufo").closeAllFolds)
 
 require("ufo").setup({
 	provider_selector = function(bufnr, filetype, buftype)
