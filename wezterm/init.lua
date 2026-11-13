@@ -26,12 +26,8 @@ module.apply_to_config = function(config, super)
 	}
 
 	config.keys = {
-		{
-			key = "k",
-			mods = super,
-			action = layout.focus_pane,
-		},
-		layout.bind_next_pane(super, "j"),
+		layout.bind_vim_aware(super, "k", layout.focus_pane),
+		layout.bind_vim_aware(super, "j", layout.next_pane),
 		{
 			key = "r",
 			mods = super,

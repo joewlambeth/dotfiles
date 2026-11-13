@@ -10,6 +10,7 @@ vim.g.wiki_root = "~/wiki"
 vim.keymap.set("n", "<leader>wt", function()
 	vim.cmd("WikiJournal")
 end, { desc = "[W]iki [T]oday" })
+
 vim.keymap.set("n", "<leader>fw", function()
 	require("telescope.builtin").live_grep({
 		cwd = "~/wiki",
@@ -27,7 +28,7 @@ vim.keymap.set("n", "<leader>fa", function()
 end, { desc = "[F]ind [A]rticles" })
 
 vim.keymap.set("n", "<leader>mh", function()
-	vim.cmd([[silent write !pandoc -f markdown -t html -o /tmp/x.html && open /tmpp/x.html]])
+	vim.cmd([[silent write !pandoc -f markdown -t html -o /tmp/x.html && open /tmp/x.html]])
 end, { desc = "[M]arkdown [H]TML" })
 
 local M = {}

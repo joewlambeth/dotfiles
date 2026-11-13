@@ -54,6 +54,31 @@ wezterm.on("gui-startup", function()
 	window:gui_window():maximize()
 end)
 
+local function is_vim(pane)
+	local process_info = pane:get_foreground_process_info()
+	local process_name = process_info and process_info.name
+	return process_name == "nvim" or process_name == "vim"
+end
+
+-- Hand the key off to nvim when it owns the pane, otherwise run the wezterm
+-- action. nvim shells back out to `wezterm cli` when the action belongs to
+-- wezterm after all -- see neovim-v2/lua/jlambeth/wezterm.lua for that half.
+function M.bind_vim_aware(mod, key, action)
+	return {
+		key = key,
+		mods = mod,
+		action = wezterm.action_callback(function(window, pane)
+			if is_vim(pane) then
+				window:perform_action(actions.SendKey({ key = key, mods = "CTRL|SHIFT" }), pane)
+			else
+				window:perform_action(action, pane)
+			end
+		end),
+	}
+end
+
+M.next_pane = actions.ActivatePaneDirection("Next")
+
 M.focus_pane = wezterm.action_callback(function(window, pane)
 	window:perform_action(actions.TogglePaneZoomState, pane)
 end)
@@ -127,25 +152,5 @@ M.split_pane = wezterm.action_callback(function(window, pane)
 		pane
 	)
 end)
-
-local function is_vim(pane)
-	local process_info = pane:get_foreground_process_info()
-	local process_name = process_info and process_info.name
-	return process_name == "nvim" or process_name == "vim"
-end
-
-function M.bind_next_pane(mod, key)
-	local callback = wezterm.action_callback(function(window, pane)
-		if is_vim(pane) then
-			window:perform_action({
-				SendKey = { key = key, mods = "CTRL|SHIFT" },
-			}, pane)
-		else
-			window:perform_action({ ActivatePaneDirection = "Next" }, pane)
-		end
-	end)
-
-	return { key = key, mods = mod, action = callback }
-end
 
 return M
